@@ -27,6 +27,15 @@ type Value interface {
 	Len() int
 }
 
+func New(maxBytes int64, onEvicted func(key string, value Value)) *Cache {
+	return &Cache{
+		maxBytes:  maxBytes,
+		cache:     make(map[string]*list.Element),
+		ll:        list.New(),
+		onEvicted: onEvicted,
+	}
+}
+
 func (c *Cache) Get(key string) (Value, bool) {
 	if ele, ok := c.cache[key]; ok {
 		c.ll.MoveToFront(ele)
